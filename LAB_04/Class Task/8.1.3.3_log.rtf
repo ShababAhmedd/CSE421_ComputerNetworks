@@ -1,0 +1,159 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf0 \expnd0\expndtw0\kerning0
+\ul \ulc0 \outl0\strokewidth0 \strokec2  Excluding the first 10 IP addresses from R2.\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ulnone R2>en\
+R2#conf t\
+Enter configuration commands, one per line.  End with CNTL/Z.\
+R2(config)#ip dhcp excluded-address 192.168.10.1 192.168.10.10\
+R2(config)#ip dhcp excluded-address 192.168.30.1 192.168.30.10\
+R2(config)#\
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+\
+\
+\ul Creating a DHCP pool on R2 for R1\
+\
+ \ulnone R2(config)#ip dhcp pool R1-LAN\
+\pard\pardeftab720\partightenfactor0
+\cf0 R2(dhcp-config)#\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ul \ulc0 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ulc0 Configuring the DHCP pool for R2 to include the network address, the default gateway, and the IP address of the DNS server\
+\
+\ulnone R2(dhcp-config)#network 192.168.10.0 255.255.255.0\
+R2(dhcp-config)#default-router 192.168.10.1\
+R2(dhcp-config)#dns-server 192.168.20.254\
+\ul \
+\
+Creating a DHCP pool on R2 for the R3 LAN\
+\
+ \ulnone R2(dhcp-config)#ip dhcp pool R3-LAN\
+R2(dhcp-config)#\
+\ul \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ulc0 \outl0\strokewidth0 Configuring the DHCP pool for R3 to include the network address, the default gateway, and the IP address of the DNS server\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ulnone \outl0\strokewidth0 \strokec2 R2(dhcp-config)#network 192.168.30.0 255.255.255.0\
+R2(dhcp-config)#default-router 192.168.30.1\
+R2(dhcp-config)#dns-server 192.168.20.254\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ul \ulc0 \
+\
+\
+Configuring R1 as DHCP relay agent\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ulnone R1>en\
+R1#conf t\
+Enter configuration commands, one per line.  End with CNTL/Z.\
+R1(config)#int g0/0\
+R1(config-if)#ip helper-address 10.1.1.2\
+R1(config-if)#\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ul \ulc0 \
+\
+\
+Configuring R3 as DHCP relay agent\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ulnone R3>en\
+R3#conf t\
+Enter configuration commands, one per line.  End with CNTL/Z.\
+R3(config)#int g0/0\
+R3(config-if)#ip helper-address 10.2.2.2\
+R3(config-if)#\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ul \ulc0 \
+\
+\
+Configuring R2 as a DHCP client.\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ulnone R2#conf t\
+Enter configuration commands, one per line.  End with CNTL/Z.\
+R2(config)#int g0/1\
+R2(config-if)#ip address dhcp\
+R2(config-if)#\
+%DUAL-5-NBRCHANGE: IP-EIGRP 1: Neighbor 209.165.200.225 (GigabitEthernet0/1) is down: interface down\
+\
+%DHCP-6-ADDRESS_ASSIGN: Interface GigabitEthernet0/1 assigned DHCP address 209.165.200.231, mask 255.255.255.224, hostname R2\
+\
+no shut down\
+R2(config-if)#no \
+%DUAL-5-NBRCHANGE: IP-EIGRP 1: Neighbor 209.165.200.225 (GigabitEthernet0/1) is up: new adjacency\
+n\
+                 ^\
+% Invalid input detected at '^' marker.\
+	\
+R2(config-if)#no shut down\
+R2(config-if)#exit\
+R2(config)#exit \
+R2#\
+%SYS-5-CONFIG_I: Configured from console by console\
+\
+R2#copy run start\
+Destination filename [startup-config]? \
+Building configuration...\
+[OK]\
+R2#\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ul \ulc0 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \ulc0 \
+Verifying configurations using PING\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \ulnone Cisco Packet Tracer PC Command Line 1.0\
+C:\\>ping 192.168.30.11\
+\
+Pinging 192.168.30.11 with 32 bytes of data:\
+\
+Request timed out.\
+Reply from 192.168.30.11: bytes=32 time=15ms TTL=125\
+Reply from 192.168.30.11: bytes=32 time=21ms TTL=125\
+Reply from 192.168.30.11: bytes=32 time=3ms TTL=125\
+\
+Ping statistics for 192.168.30.11:\
+    Packets: Sent = 4, Received = 3, Lost = 1 (25% loss),\
+Approximate round trip times in milli-seconds:\
+    Minimum = 3ms, Maximum = 21ms, Average = 13ms\
+\
+C:\\>\
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 Cisco Packet Tracer PC Command Line 1.0\
+C:\\>ping 192.168.10.11\
+\
+Pinging 192.168.10.11 with 32 bytes of data:\
+\
+Reply from 192.168.10.11: bytes=32 time=19ms TTL=125\
+Reply from 192.168.10.11: bytes=32 time=29ms TTL=125\
+Reply from 192.168.10.11: bytes=32 time=22ms TTL=125\
+Reply from 192.168.10.11: bytes=32 time=24ms TTL=125\
+\
+Ping statistics for 192.168.10.11:\
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\
+Approximate round trip times in milli-seconds:\
+    Minimum = 19ms, Maximum = 29ms, Average = 23ms\
+\
+C:\\>\
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+}
